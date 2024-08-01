@@ -66,7 +66,7 @@ def retrieve_signup():
             flash(f'Error: {err}', 'error')
     return render_template('start.html')
 
-@app.route('/add_password',  methods = ["GET", "POST"])
+@app.route('/add_password', methods = ["GET", "POST"])
 def retrieve_new_password():
     if request.method == 'POST':
         website = request.form['website']
@@ -81,6 +81,11 @@ def retrieve_new_password():
             add_password(connection, session.get('user_id'), website, username, password)
     return redirect(url_for('index'))
         
+@app.route('/logout', methods = ["GET", "POST"])
+def logout():
+    session['user_id'] = None
+    print(session.get('user_id'))
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(debug = True)
