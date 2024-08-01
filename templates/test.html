@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Password</title>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            background: -webkit-linear-gradient(left, #a445b2, #fa4299);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        /* Styling for the form container */
+        #form-container {
+            display: none; /* Hidden by default */
+            position: fixed;
+            right: 43%;
+            top: 30%;
+            width: 15%;
+            height: 35%;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+            padding: 20px;
+            z-index: 1000;
+        }
+        #form-container h4 {
+            margin-top: 0;
+            padding: 10px;
+            color: black;
+            text-align: center;
+        }
+        /* Styling for the close button */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        /* Styling for the overlay */
+        #overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 500;
+        }
+        /* Basic styling for the button and form elements */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+            border: none;
+        }
+        .field {
+            margin-top: 20px;
+        }
+        .field input {
+            width: 100%;
+            padding: 15px;
+            font-size: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .btn-layer {
+            height: 100%;
+            background: -webkit-linear-gradient(right, #a445b2, #fa4299, #a445b2, #fa4299);
+            border-radius: 5px;
+            transition: all 0.4s ease;
+            outline: none;
+            font-size: 15px;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .btn-layer input {
+            width: 100%;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .item {
+            width: 60%;
+            border: 1px solid black;
+            border-radius: 10px;
+            background: white;
+            text-align: center;
+            margin: 10px 0;
+        }
+        #container_list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 70%;
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <button class="btn" onclick="showForm()">Add New Password</button>
+
+        <div id="container_list">
+            <div class="item">
+                <ul class="ïtem">Hello</ul>
+            </div>
+            <div class="item">
+                <ul class="ïtem">Hello</ul>
+            </div>
+            <div class="item">
+                <ul class="ïtem">Hello</ul>
+            </div>
+            <div class="item">
+                <ul class="ïtem">Hello</ul>
+            </div>
+            <div class="item">
+                <ul class="ïtem">Hello</ul>
+            </div>
+        </div>
+
+        <div id="form-container">
+            <button class="close-btn" onclick="hideForm()">&#x2715;</button>
+            <h4>Add Password</h4>
+            <form action="/add_password" method="POST">
+                <div class="field">
+                    <input type="text" name="website" placeholder="Website" required> <br>
+                </div>
+                <div class="field">
+                    <input type="text" name="username" placeholder="Username" required> <br>
+                </div>
+                <div class="field">
+                    <input type="password" name="password" placeholder="Password" required> <br>
+                </div>
+                <div class="field">
+                    <input type="password" name="confirm" placeholder="Confirm Password" required> <br>
+                </div>
+                <div class="field btn-layer">
+                    <input type="submit" value="Add Password">
+                </div>
+                <div>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <p class="{{ category }}">{{ message }}</p>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function showForm() {
+            document.getElementById('form-container').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function hideForm() {
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
