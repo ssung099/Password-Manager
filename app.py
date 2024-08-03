@@ -8,7 +8,7 @@ app.secret_key = "testing"
 
 connection = create_db_connection("localhost", "root", "", "password_manager")
 initialize_tables(connection)
-
+cursor = connection.cursor()
 
 @app.route('/')
 def index():
@@ -71,8 +71,8 @@ def retrieve_new_password():
     if request.method == 'POST':
         website = request.form['website']
         username = request.form['username']
-        password = request.form['password']
-        confirm = request.form['confirm']
+        password = request.form['new_password']
+        confirm = request.form['new_confirm']
         # key = Fernet.generate_key()
         # f = Fernet(key)
         # password = f.encrypt(request.form['password'].encode())
@@ -86,6 +86,38 @@ def logout():
     session['user_id'] = None
     print(session.get('user_id'))
     return redirect(url_for('index'))
+
+@app.route('/edit', methods = ["GET", "POST"])
+def edit():
+    if request.method == 'POST':
+        action = request.form['action']
+        password_id = request.form['password_id']
+        username = request.form['username']
+        password = request.form['password']
+
+        if action == "Submit":
+            update_query = f"""
+            UPDATE password
+            SET username = %s, password = %s
+            WHERE password_id = %s AND user_id = %s
+            """
+            cursor.execute(update_query, (username, password, password_id, session.get('user_id')))
+            connection.commit()
+            print("Updated:", username, password, password_id, session.get('user_id'))
+            return redirect(url_for('index'))
+        elif action == "Delete":
+            del_query = f"""
+            DELETE from password
+            WHERE password_id = %s
+            AND username = %s
+            AND password = %s
+            AND user_id = %s
+            """
+            cursor.execute(del_query, (password_id, username, password, session.get('user_id')))
+            connection.commit()
+            print('Deleted:', password_id, username, password, session.get('user_id'))
+            return redirect(url_for('index'))
+    return
 
 if __name__ == "__main__":
     app.run(debug = True)

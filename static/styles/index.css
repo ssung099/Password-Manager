@@ -7,34 +7,82 @@ html, body {
     align-items: center;
     margin: 0;
 }
+
 /* Styling for the form container */
 #form-container {
     display: none; /* Hidden by default */
+    flex-direction: column;
     position: fixed;
-    right: 43%;
-    top: 30%;
-    width: 15%;
-    height: 35%;
+    width: 20%;
+    height: 30%;
     background-color: #f9f9f9;
     border-radius: 15px;
+    font-size: 18px;
     box-shadow: -2px 0 5px rgba(0,0,0,0.3);
     padding: 20px;
     z-index: 1000;
 }
+
 #form-container h4 {
     margin-top: 0;
-    padding: 10px;
     color: black;
     text-align: center;
+}
+
+.field {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.normal input {
+    width: 95%;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.special input {
+    width: 95%;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+    box-sizing: border-box;
+    background: -webkit-linear-gradient(right, #a445b2, #fa4299, #a445b2, #fa4299);
+    cursor: pointer;
+    color: white;
+}
+
+.btn-layer {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.btn-layer input {
+    width: 95%;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background: -webkit-linear-gradient(right, #a445b2, #fa4299, #a445b2, #fa4299);
+    outline: none;
+    box-sizing: border-box;
+    color: white;
 }
 /* Styling for the close button */
 .close-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 17px;
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 18px;
     cursor: pointer;
 }
 /* Styling for the overlay */
@@ -58,38 +106,7 @@ html, body {
     border: none;
     margin: 10px;
 }
-.field {
-    margin-top: 20px;
-}
-.field input {
-    width: 100%;
-    padding: 15px;
-    font-size: 15px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    outline: none;
-    box-sizing: border-box;
-}
-.btn-layer {
-    height: 100%;
-    width: 50%;
-    background: -webkit-linear-gradient(right, #a445b2, #fa4299, #a445b2, #fa4299);
-    border-radius: 5px;
-    transition: all 0.4s ease;
-    outline: none;
-    font-size: 15px;
-    color: white;
-    cursor: pointer;
-    margin: 10px;
-}
-.btn-layer input {
-    width: 100%;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-}
+
 .item {
     width: 60%;
     border: 1px solid black;
@@ -99,6 +116,7 @@ html, body {
     font-family:'Times New Roman', Times, serif;
     margin-bottom: 10px;
 }
+
 #container_list {
     display: flex;
     flex-direction: column;
@@ -111,20 +129,31 @@ html, body {
     align-items: center;
     width: 100%;
 }
+
 .details-containers {
-    display: none; /* Hide by default */
-    margin-top: 10px;
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    font-size: 18px;
 }
 .website_name {
     cursor: pointer;
 }
-.button-container {
+
+.btn-layer {
     display: flex;
     justify-content: space-between;
+    width: 95%;
 }
+
 .menu-buttons {
     display: flex;
-    justify-content: space-between;
-    width: 70%;
+    width: 40%;
+    justify-content: center;
     margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.toggle-password {
+    cursor: pointer;
+    text-decoration: underline;
 }

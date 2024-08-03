@@ -23,22 +23,22 @@
                         <ul class="ïtem">{{ password[1] }}</ul>
                     </div>
                     <div class="details-containers">
-                        <form class="details" action="/edit_password" method="POST">
-                            <div class="field">
+                        <form class="details" action="/edit" method="POST">
+                            <input type="hidden" name="password_id" value="{{ password[0] }}">
+                            <div class="field normal">
                                 <input type="text" name="username" value="{{ password[2] }}" required> <br>
                             </div>
-                            <div class="field">
+                            <div class="field normal">
                                 <input type="password" name="password" value="{{ password[3] }}" required> <br>
                             </div>
-                            <div class="button-container">
-                                <div class="field btn-layer">
-                                    <input type="submit" value="Edit">
-                                </div>
-                                <div class="field btn-layer">
-                                    <form action="/delete_password" method="POST" onsubmit="return confirm('Are you sure you want to delete this password?');">
-                                        <input type="submit" value="Delete">
-                                    </form>
-                                </div>
+                            <div class="field normal">
+                                <span class="toggle-password" onclick="togglePasswordVisibility(this)"> Show Password </span>
+                            </div>
+                            <div class="field btn-layer">
+                                    <input type="button" value="Edit" onclick="makeEditable(this)">
+                                    <input type="submit" name="action" value="Submit" style="display: none;">
+                                    <input type="button" value="Cancel" onclick="cancelEdit(this)" style="display: none;">
+                                    <input type="submit" name="action" value="Delete">
                             </div>
                         </form>
                     </div>
@@ -50,46 +50,43 @@
                 </div>
             {% endif %}
         </div>
-
-        <div id="form-container">
-            <button class="close-btn" onclick="hideForm()">&#x2715;</button>
-            <h4>Add Password</h4>
-            <form id="password-form" action="/add_password" method="POST">
-                <div class="field">
-                    <input type="text" name="website" placeholder="Website" required> <br>
-                </div>
-                <div class="field">
-                    <input type="text" name="username" placeholder="Username" required> <br>
-                </div>
-                <div class="field">
-                    <input type="password" name="password" placeholder="Password" required> <br>
-                </div>
-                <div class="field">
-                    <input type="password" name="confirm" placeholder="Confirm Password" required> <br>
-                </div>
-                <div class="field btn-layer">
-                    <input type="submit" value="Add Password">
-                </div>
-            </form>
-        </div>
+    </div>
+    <div id="form-container">
+        <button class="close-btn" onclick="hideForm()">&#x2715;</button>
+        <h4>Add Password</h4>
+        <form id="password-form" action="/add_password" method="POST">
+            <div class="field normal">
+                <input type="text" name="website" placeholder="Website Address" required> <br>
+            </div>
+            <div class="field normal">
+                <input type="text" name="username" placeholder="Username" required> <br>
+            </div>
+            <div class="field normal">
+                <input type="password" name="new_password" placeholder="Password" required> <br>
+            </div>
+            <div class="field normal">
+                <input type="password" name="new_confirm" placeholder="Confirm Password" required> <br>
+            </div>
+            <div class="field special">
+                <input type="submit" value="Add Password">
+            </div>
+        </form>
     </div>
     <script>
         function showForm() {
-            document.getElementById('form-container').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('form-container').style.display = 'flex';
         }
 
         function hideForm() {
             document.getElementById('form-container').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
         }
 
         document.getElementById('password-form').addEventListener('submit', function(event) {
-            var password = document.querySelector('input[name="password"]').value;
-            var confirm = document.querySelector('input[name="confirm"]').value;
+            var password = document.querySelector('input[name="new_password"]').value;
+            var confirm = document.querySelector('input[name="new_confirm"]').value;
 
             if (password !== confirm) {
-                alert('Passwords do not match');
+                alert("Passwords do not match!!");
                 event.preventDefault(); // Prevent form submission
             }
         });
@@ -100,6 +97,48 @@
                 details.style.display = "block";
             } else {
                 details.style.display = "none";
+            }
+        }
+        
+        function makeEditable(button) {
+            var form = button.closest('form');
+            var inputs = form.querySelectorAll('input[type="text"], input[type="password"]');
+            inputs.forEach(input => {
+                input.removeAttribute('readonly');
+                input.classList.add('editable');
+                input.style.backgroundColor = '#f0f0f0'; // Light blue background for edit mode
+            });
+            form.querySelector('input[type="submit"][value="Submit"]').style.display = 'inline-block';
+            form.querySelector('input[type="button"][value="Cancel"]').style.display = 'inline-block';
+            button.style.display = 'none';
+        }
+
+
+        function cancelEdit(button) {
+            var form = button.closest('form');
+            var inputs = form.querySelectorAll('input[type="text"], input[type="password"]');
+            inputs.forEach(input => {
+                input.setAttribute('readonly', true);
+                input.classList.remove('editable');
+                input.style.backgroundColor = ''; // Reset background color
+            });
+            form.querySelector('input[type="submit"][value="Submit"]').style.display = 'none';
+            form.querySelector('input[type="button"][value="Edit"]').style.display = 'inline-block';
+            button.style.display = 'none';
+            
+            // Reset the input values to their original values
+            form.reset();
+        }
+
+        function togglePasswordVisibility(button) {
+            var form = button.closest('form')
+            var passwordInput = form.querySelector('input[name="password"]');
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                button.textContent = "Hide Password"
+            } else {
+                passwordInput.type = "password";
+                button.textContent = "Show Password"
             }
         }
     </script>
