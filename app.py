@@ -1,6 +1,7 @@
 from flask import *
 from main import *
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, MultiFernet
+import os
 
 
 app = Flask(__name__)
@@ -9,6 +10,7 @@ app.secret_key = "testing"
 connection = create_db_connection("localhost", "root", "", "password_manager")
 initialize_tables(connection)
 cursor = connection.cursor()
+FILENAME = "encryption.key"
 
 @app.route('/')
 def index():
@@ -20,14 +22,16 @@ def index():
         WHERE user_id = {id}
         """
         passwords = read_query(connection, query)
-        return render_template('index.html', passwords = passwords)
+        f = MultiFernet(get_keys(FILENAME))
+        decrypted = []
+        for password in passwords:
+           new = (password[0], password[1], password[2], f.decrypt(password[3].encode()).decode(), password[4])
+           decrypted.append(new)
+        return render_template('index.html', passwords = decrypted)
     return render_template('start.html')
 
 
 # Login an Existing User to the database
-
-## CHANGE APP ROUTE SO THAT SIGN UP AND LOGIN ARE ALL TOGETHER
-## TWO FORMS IN ONE PAGE
 @app.route('/login', methods = ["GET", "POST"])
 def retrieve_login():
     if request.method == 'POST':
@@ -73,12 +77,13 @@ def retrieve_new_password():
         username = request.form['username']
         password = request.form['new_password']
         confirm = request.form['new_confirm']
-        # key = Fernet.generate_key()
-        # f = Fernet(key)
-        # password = f.encrypt(request.form['password'].encode())
+
         if password == confirm:
-            print(website, username, password, session.get('user_id'))
-            add_password(connection, session.get('user_id'), website, username, password)
+            key = create_key(FILENAME)
+            f = MultiFernet([key] + get_keys(FILENAME))
+            password = f.encrypt(password.encode())
+            # print(website, username, password, session.get('user_id'))
+            add_password(connection, session.get('user_id'), website, username, password.decode("utf-8"))
     return redirect(url_for('index'))
         
 @app.route('/logout', methods = ["GET", "POST"])
@@ -101,6 +106,9 @@ def edit():
             SET username = %s, password = %s
             WHERE password_id = %s AND user_id = %s
             """
+            key = create_key(FILENAME)
+            f = MultiFernet([key] + get_keys(FILENAME))
+            password = f.encrypt(password.encode())
             cursor.execute(update_query, (username, password, password_id, session.get('user_id')))
             connection.commit()
             print("Updated:", username, password, password_id, session.get('user_id'))
@@ -118,6 +126,20 @@ def edit():
             print('Deleted:', password_id, username, password, session.get('user_id'))
             return redirect(url_for('index'))
     return
+
+def create_key(filename):
+    key = Fernet.generate_key()
+    with open(filename, "ab") as f:
+        f.write(key + b'\n')
+    print(key)
+    return Fernet(key)
+
+def get_keys(filename):
+    keys = []
+    with open(filename, "r") as f:
+        for line in f.readlines():
+            keys.append(Fernet(line.strip()))
+    return keys
 
 if __name__ == "__main__":
     app.run(debug = True)
